@@ -1,0 +1,52 @@
+# See http://help.github.com/ignore-files/ for more about ignoring files.
+
+# compiled output
+/dist
+/tmp
+/out-tsc
+
+# dependencies
+/node_modules
+
+# Allow
+!node_modules/fabric
+!node_modules/fabric/dist
+!node_modules/fabric/dist/*
+
+# IDEs and editors
+/.idea
+.project
+.classpath
+.c9/
+*.launch
+.settings/
+*.sublime-workspace
+
+# IDE - VSCode
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+
+# misc
+/.sass-cache
+/connect.lock
+/coverage
+/libpeerconnection.log
+npm-debug.log
+yarn-error.log
+testem.log
+/typings
+
+# System Files
+.DS_Store
+Thumbs.db
+.vs/ProjectSettings.json
+.vs/slnx.sqlite
+.vs/icentra-frontend/v16/.suo
+.vs/icentra-frontend/config/applicationhost.config
+.vs/VSWorkspaceState.json
+*.20190731.143816.5872.0.001.json
+package-lock.json
+node_modules/fabric/dist/fabric.js
