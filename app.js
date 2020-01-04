@@ -38,4 +38,11 @@ app.use(function(err, req, res, next) {
   res.render('error');
 });
 
+var MongoClient = require('mongoose');
+
+MongoClient.connect('mongodb://localhost:27017/job-portal', {
+    useNewUrlParser: true,
+    useUnifiedTopology: true
+})
+
 module.exports = app;
