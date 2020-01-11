@@ -2,6 +2,7 @@ var express = require('express');
 var router = express.Router();
 var User = require('../models/user');
 var Post = require('../models/post');
+var Tag = require('../models/tag');
 
 /* GET users listing. */
 router.get('/', function(req, res, next) {
@@ -43,5 +44,20 @@ router.get('/store', function(req, res, next) {
   });
   res.send(user);
 });
-
+router.get('/tags/store', function(req, res, next) {
+  console.log('result');
+  var arr = [];
+  arr.push('5e120cbc26825810d899df0f');
+  const  tag = new Tag({
+    title: 'my book',
+    posts: arr
+  }).save().then(result => {
+    return res.status(200).json(result)
+  }); 
+});
+router.get('/tags', function(req, res, next) {
+  Tag.find({}).populate('posts').then(result => {
+    return res.status(200).json(result);
+  })
+});
 module.exports = router;
