@@ -5,9 +5,23 @@ var Post = require('../models/post');
 
 /* GET users listing. */
 router.get('/', function(req, res, next) {
+  User.aggregate([
+    {
+    $lookup: {
+      from : "posts",
+      localField: "_id",
+      foreignField: "user",
+      as: "posts"
+
+    }
+  }]).then(re => {
+    return res.status(200).json({data: re});
+  })
+  /*
   const all = User.find({}).populate('posts').exec().then(result => {
     return res.status(200).json({data: result});
   });
+  */
 });
 router.get('/posts', function(req, res, next) {
   const all = Post.find({}).populate('user').then(result => {
