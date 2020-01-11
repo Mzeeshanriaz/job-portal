@@ -24,11 +24,13 @@ router.get('/', function(req, res, next) {
   });
   */
 });
+// get posts
 router.get('/posts', function(req, res, next) {
   const all = Post.find({}).populate('user').then(result => {
     return res.status(200).json({data: result});
   });
 });
+// store new user with new post 
 router.get('/store', function(req, res, next) {
   const user = new User({
     username: 'zeeshan 97'
@@ -44,19 +46,21 @@ router.get('/store', function(req, res, next) {
   });
   res.send(user);
 });
+// new tag
 router.get('/tags/store', function(req, res, next) {
   console.log('result');
   var arr = [];
-  arr.push('5e120cbc26825810d899df0f');
+  // arr.push('5e120cbc26825810d899df0f');
   const  tag = new Tag({
     title: 'my book',
-    posts: arr
+    posts: []
   }).save().then(result => {
     return res.status(200).json(result)
   }); 
 });
+// all tags having posts 
 router.get('/tags', function(req, res, next) {
-  Tag.find({}).populate('posts').then(result => {
+  Tag.find({'posts.0': {"$exists": true}}).populate('posts').then(result => {
     return res.status(200).json(result);
   })
 });
