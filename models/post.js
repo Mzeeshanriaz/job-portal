@@ -11,11 +11,7 @@ var postSchema = new schema({
     user : {
         type: mongoose.Schema.Types.ObjectId,
         ref : 'User'
-    },
-    tags : [{
-        type: mongoose.Schema.Types.ObjectId,
-        ref : 'Tag'
-    }]
+    }
 });
 
 module.exports = mongoose.model('Post', postSchema);
