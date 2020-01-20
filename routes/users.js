@@ -73,7 +73,16 @@ router.get('/post-tag-pivot', function(req, res, next) {
   });
 });
 router.get('/get-post-tag-pivot', function(req, res, next) {
-  PostTagPivot.find({'tag': '5e1ddff441b8040bb0bc1d0f'}).populate('post', 'title').populate('tag', 'title').then(re => {
+  PostTagPivot.find()
+  .populate({
+    path: 'post',
+  })
+  .populate({
+    path: 'tag',
+    match: { title: 'my book' },
+    select: 'title',
+  })
+  .then(re => {
     return res.status(200).json({data: re});
   }).catch(err => {
     return res.status(200).json({error : err})
