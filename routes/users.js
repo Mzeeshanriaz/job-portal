@@ -14,7 +14,6 @@ router.get('/', function(req, res, next) {
       localField: "_id",
       foreignField: "user",
       as: "posts"
-
     }
   }]).then(re => {
     return res.status(200).json({data: re});
@@ -24,6 +23,17 @@ router.get('/', function(req, res, next) {
     return res.status(200).json({data: result});
   });
   */
+});
+router.post('/create', function(req,res){
+  var newUser = new User(req.query);
+  newUser.save(function(err) {
+    res.status(200).json({error: err});
+  });
+  res.status(200).json({Message: 'created'});
+});
+  
+router.post('/:id', function(req,res){
+res.status(200).json({data: req.params});
 });
 // get posts
 router.get('/posts', function(req, res, next) {
