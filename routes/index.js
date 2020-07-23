@@ -140,4 +140,38 @@ router.post('/users/:id/post',[
       })
     });
     
+    router.get('/get-tags-used-by-user/:userId',[], function(req, res, next) {
+      PostModel.aggregate([
+      {
+        $match: {user: ObjectId(req.params.userId)}
+      },
+      
+      {
+        $lookup: {
+          from: "tags",
+          localField: "tags",
+          foreignField: "_id",
+          as: "tags"
+        }
+      },
+      {
+        $project:{
+          "tags": {
+            "posts":0,
+            __v: 0
+          },
+          _id:0
+        }
+      },  
+    {$unwind: "$tags"},
+    ]).exec((err, results) => {
+      if (err) throw err;
+      let arr = [];
+      Object.keys(results).forEach(k => {
+        arr.push(results[k]['tags']);
+      })
+      return res.status(200).json({data: arr});
+      })
+    });
+
 module.exports = router;
