@@ -2,6 +2,8 @@ var express = require('express');
 var User = require('../models/user');
 var PostModel = require('../models/post');
 var Tag = require('../models/tag');
+const { db } = require('../models/user');
+const { ObjectId } = require('mongodb');
 var router = express.Router();
 /* GET home page. */
 router.get('/', function(req, res, next) {
@@ -104,5 +106,38 @@ router.post('/users/:id/post',[
     res.status(422).json({error: 'User not Found'});
   })
     });
+router.get('/get-users-using-tag/:tagId',[], function(req, res, next) {
+  PostModel.aggregate([
+  {
+    $match: {tags: ObjectId(req.params.tagId)}
+  },
+  
+  {
+    $lookup: {
+      from: "users",
+      localField: "user",
+      foreignField: "_id",
+      as: "user"
+    }
+  },
+  {
+    $project:{
+      "user": {
+        "posts":0,
+        __v: 0
+      },
+      _id:0
+    }
+  },  
+{$unwind: "$user"},
+]).exec((err, results) => {
+  if (err) throw err;
+  let arr = [];
+  Object.keys(results).forEach(k => {
+    arr.push(results[k]['user']);
+  })
+  return res.status(200).json({data: arr});
+  })
+});
 
 module.exports = router;
