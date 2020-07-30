@@ -1,5 +1,6 @@
 var express = require('express');
 var User = require('../models/user');
+var Office = require('../models/office');
 var PostModel = require('../models/post');
 var Tag = require('../models/tag');
 const { db } = require('../models/user');
@@ -28,7 +29,25 @@ router.post('/post/:post/tags',[
   })
 });
 
-router.get('/tags',[
+router.get('/offices', function(req, res, next) {
+  Office.find().populate('users').then(results=>{
+    res.status(200).json({result: results});
+  })
+});
+router.post('/offices', function(req, res, next) {
+  let office = Office(req.body).save().then(result => {
+    res.status(200).json({result: result});
+  }).catch(err => {
+    res.status(422).json({error: err});
+  });
+});
+const tokenCheck = function(req, res, next) {
+  if(!req.headers.hasOwnProperty('authorization') ) {
+    return res.status(402).json({error: 'Authorization not Exist on header'});
+  }
+  next();
+};
+router.get('/tags',[tokenCheck
 ], function(req, res, next) {
   Tag.find().then(results => {
     res.status(200).json({result: results});
@@ -173,5 +192,29 @@ router.post('/users/:id/post',[
       return res.status(200).json({data: arr});
       })
     });
+    router.get('/offices-users-having-posts', function(req, res, next) {
+      PostModel.aggregate([
+        {
+          $lookup: {
+            from: "users",
+            localField: "user",
+            foreignField: "_id",
+            as: "user"
+          }
+        },
+        {
+          $lookup: {
+            from: "offices",
+            localField: "offices",
+            foreignField: "_id",
+            as: "offices"
+          }
+        },
+  
+      ]).exec((err,results) => {
+        return res.status(200).json({data: results});
 
+      })
+    });
+    
 module.exports = router;
