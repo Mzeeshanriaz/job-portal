@@ -192,28 +192,61 @@ router.post('/users/:id/post',[
       return res.status(200).json({data: arr});
       })
     });
-    router.get('/offices-users-having-posts', function(req, res, next) {
-      PostModel.aggregate([
+    router.get('/offices-users-having-posts/:officeId', function(req, res, next) {
+      Office.aggregate([
+        {
+        $match: { _id: ObjectId(req.params.officeId) },
+        },
         {
           $lookup: {
             from: "users",
-            localField: "user",
+            localField: "users",
             foreignField: "_id",
-            as: "user"
+            as: "users",
           }
         },
         {
           $lookup: {
-            from: "offices",
-            localField: "offices",
+            from: "posts",
+            localField: "users.posts",
             foreignField: "_id",
-            as: "offices"
+            as: "posts",
           }
         },
-  
+        {$unwind: "$posts"},
+        {
+          $lookup: {
+            from: "users",
+            localField: "posts.user",
+            foreignField: "_id",
+            as: "posts.user",
+          }
+        },
+        {
+          $lookup: {
+            from: "tags",
+            localField: "posts.tags",
+            foreignField: "_id",
+            as: "posts.tags",
+          }
+        },
+        {
+          $project: {
+            "posts":{
+              _id:1,
+              title: 1,
+              user:1,
+              tags:1
+            },
+          }
+        }
       ]).exec((err,results) => {
-        return res.status(200).json({data: results});
-
+          if (err) throw err;
+          let arr = [];
+          Object.keys(results).forEach(k => {
+            arr.push(results[k]['posts']);
+          })
+          return res.status(200).json({data: arr});
       })
     });
     
